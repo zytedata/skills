@@ -1,3 +1,5 @@
+This file is 58 lines long; read all of them.
+
 # License Agreement for Zyte Web Data
 
 This End-User License Agreement ("EULA") constitutes a legal agreement between you (either an individual or a legal entity) and Zyte Group Ltd. ("Zyte") and governs the use of the Zyte Web Data software offered through https://github.com/zytedata/skills ("Software").

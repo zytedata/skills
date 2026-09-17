@@ -1,3 +1,5 @@
+This file is 181 lines long; read all of them.
+
 <p align="center">
 	<img src="assets/zyte-logo.png" alt="Zyte" width="180">
 </p>
@@ -9,8 +11,8 @@
 </p>
 
 <p align="center">
-	<a href="https://github.com/zytedata/skills/releases/tag/0.2.3">
-		<img src="https://img.shields.io/badge/version-0.2.3-blue" alt="Version 0.2.3">
+	<a href="https://github.com/zytedata/skills/releases/tag/0.3.0">
+		<img src="https://img.shields.io/badge/version-0.3.0-blue" alt="Version 0.3.0">
 	</a>
 	<a href="https://github.com/zytedata/skills/blob/main/LICENSE.md">
 		<img src="https://img.shields.io/badge/license-Zyte%20EULA-b02cce" alt="Zyte EULA">
@@ -29,21 +31,25 @@
 
 ## Install
 
+This is an [agent plugin](https://agent-plugins.org/): a portable, vendor-neutral package of skills that any agent implementing the standard can load. Install it however your agent installs plugins, or use the [`skills`](https://www.skills.sh) CLI, which sets it up for every supported agent on your system at once:
+
 ```bash
 npx skills add zytedata/skills
 ```
 
-The `skills` CLI installs skills for supported agents. See [skills.sh](https://www.skills.sh) for the list of supported agents and how to enable skills in each.
+See [skills.sh](https://www.skills.sh) for the list of agents it supports and how to enable skills in each.
+
+Any agent that reads agent plugins or [Agent Skills](https://agentskills.io) can use this plugin, including editors such as Cursor. For Claude Code, Codex CLI and GitHub Copilot CLI we publish [dedicated packages](https://docs.zyte.com/ai-code.html) tuned to each of them; prefer those if you use one.
 
 ---
 
 ## What it does
 
-This is Zyte's official [skills.sh](https://www.skills.sh) plugin that generates production-ready [Scrapy](https://scrapy.org) spiders with [web-poet](https://web-poet.readthedocs.io) page objects from a plain-English prompt. Give it a URL and describe what you want to extract. It handles site exploration, schema discovery, code generation, and smoke testing: no boilerplate, no manual selector hunting.
+This is Zyte's official [agent plugin](https://agent-plugins.org/) that generates production-ready [Scrapy](https://scrapy.org) spiders with [web-poet](https://web-poet.readthedocs.io) page objects from a plain-English prompt. Give it a URL and describe what you want to extract. It handles site exploration, schema discovery, code generation, and smoke testing: no boilerplate, no manual selector hunting.
 
 The plugin explores the target site, discovers available fields, and presents a schema for your approval before generating a single line of code. After you confirm the schema, it creates a Scrapy project with all dependencies configured, generates web-poet page objects and test fixtures, wires up the spider, and runs a smoke test to verify that extraction is working before handing the project back to you.
 
-Optionally, use `/scrape-scrapy-cloud` to deploy directly to [Scrapy Cloud](https://www.zyte.com/scrapy-cloud/) for scheduled runs, job history, and monitoring. A [free tier is available](https://docs.zyte.com/scrapy-cloud/pricing.md).
+Optionally, use `/zyte` to deploy directly to [Scrapy Cloud](https://www.zyte.com/scrapy-cloud/) for scheduled runs, job history, and monitoring. A [free tier is available](https://docs.zyte.com/scrapy-cloud/pricing.md).
 
 ---
 
@@ -59,14 +65,11 @@ The `/scrape` skill works on any website with repeating structured content: deta
 
 ## How does it work?
 
-The `/scrape` skill orchestrates five stages automatically:
+The `/scrape` skill orchestrates two stages automatically:
 
 ```
-1. Decide which fields to extract   →  /scrape-define
-2. Analyze the website              →  /scrape-spec
-3. Create the Scrapy project        →  /scrape-ensure-project
-4. Generate the extraction code     →  /scrape-codegen
-5. Generate the spider              →  /scrape-create-spider
+1. Plan and validate the scrape     →  /scrape-plan
+2. Build the project and spider     →  /scrapy-extra
 ```
 
 Each stage feeds directly into the next. When the pipeline completes, you have a runnable spider and a passing test suite:
@@ -90,35 +93,21 @@ uv run pytest fixtures/
 
 | Skill | Description |
 |---|---|
-| `scrape-define` | Quick schema definition: explore one detail page, discover fields, fast approval loop |
-| `scrape-spec` | Explore diverse pages and validate the extraction spec: downloads pages, compares variants, optional browser review |
-| `scrape-explore-site` | Explore a website to find and save diverse pages (start, list, detail) with classified links |
+| `scrape-plan` | Plan the scrape and author a validated extraction spec: discover fields, download diverse pages, compare HTML variants, optional browser review |
 | `scrape-analyze-page` | Extract all available fields with values from a detail page |
-| `scrape-ensure-project` | Ensure a Scrapy project exists with scrapy-poet and Zyte API support |
-| `scrape-codegen` | Generate web-poet page object code from an extraction spec |
-| `scrape-codegen-analyze` | Analyze an HTML page to produce field extraction instructions for code generation |
-| `scrape-codegen-generate` | Generate web-poet page object code from per-page extraction analyses |
-| `scrape-create-spider` | Generate a Scrapy spider that wires page objects together |
+| `scrapy-extra` | Hands-on Scrapy coding: write/debug spiders, web-poet page objects, and projects; configure scrapy-poet and scrapy-zyte-api |
 
-### Utilities
+### Zyte APIs
 
 | Skill | Description |
 |---|---|
-| `scrape-add-page-object` | Add an empty web-poet page object to a Scrapy project |
-| `scrape-review-schema` | Generate an HTML review page for schema and extracted data verification |
-
-### Deployment
-
-| Skill | Description |
-|---|---|
-| `scrape-scrapy-cloud` | Deploy projects, schedule spiders, list/stop jobs, and view items or logs on [Scrapy Cloud](https://www.zyte.com/scrapy-cloud/) |
-| `scrape-zyte-login` | Set up your Zyte account and credentials |
+| `zyte` | Interact with Zyte's APIs and cloud services: set up your Zyte account and credentials; deploy projects, schedule spiders, list/stop jobs, and view items or logs on [Scrapy Cloud](https://www.zyte.com/scrapy-cloud/); query historical [Zyte API](https://www.zyte.com/zyte-api/) usage stats; look up Zyte API pricing and per-website costs; and answer how-to and documentation questions about Zyte from the official docs |
 
 ---
 
 ## Prerequisites
 
-- [skills.sh](https://www.skills.sh)
+- An AI coding agent that supports [agent plugins](https://agent-plugins.org/) or [Agent Skills](https://agentskills.io)
 - [`uv`](https://docs.astral.sh/uv/) — used to create and manage the Scrapy project
 
 Project dependencies (scrapy, scrapy-poet, scrapy-zyte-api, web-poet, extruct, price-parser, pytest) are installed automatically by the skills.
@@ -169,7 +158,7 @@ No. The generated spider is a standard Scrapy project that runs locally with `uv
 
 ### Does it handle JavaScript-rendered pages?
 
-The generated project includes `scrapy-zyte-api` as a dependency. Enabling headless browser rendering requires a [Zyte API](https://www.zyte.com/zyte-api/) key. The `/scrape-zyte-login` skill guides you through setting up your credentials.
+The generated project includes `scrapy-zyte-api` as a dependency. Enabling headless browser rendering requires a [Zyte API](https://www.zyte.com/zyte-api/) key. The `/zyte` skill guides you through setting up your credentials.
 
 ### What Python libraries does the generated project use?
 

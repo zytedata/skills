@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "zyte-web-data",
+  "description": "Zyte Web Data: from a plain-English prompt to a working Scrapy spider",
+  "version": "0.3.0",
+  "homepage": "https://github.com/zytedata/skills",
+  "repository": "https://github.com/zytedata/skills"
+}
